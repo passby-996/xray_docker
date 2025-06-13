@@ -42,5 +42,6 @@ RUN apk add --no-cache tzdata ca-certificates jq curl libqrencode-tools && \
     chmod +x /entrypoint.sh
 
 
+RUN chmod +x ./entrypoint.sh
 ENTRYPOINT ["./entrypoint.sh"]
 EXPOSE 443

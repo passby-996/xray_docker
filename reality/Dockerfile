@@ -41,6 +41,6 @@ RUN apk add --no-cache tzdata ca-certificates jq curl libqrencode-tools && \
     wget -O /geoip.dat https://github.com/v2fly/geoip/releases/latest/download/geoip.dat && \
     chmod +x /entrypoint.sh
 
-
+RUN chmod +x ./entrypoint.sh
 ENTRYPOINT ["./entrypoint.sh"]
 EXPOSE 443
