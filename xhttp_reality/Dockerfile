@@ -30,8 +30,11 @@ ENV TZ=Asia/Shanghai
 
 WORKDIR /
 
-COPY ./entrypoint.sh /
-COPY ./config.json /
+COPY entrypoint.sh /entrypoint.sh
+RUN sed -i 's/\r$//' /entrypoint.sh
+RUN ls -lah /entrypoint.sh
+
+COPY config.json /config.json
 
 COPY --from=builder /app/xray /
 
@@ -42,6 +45,5 @@ RUN apk add --no-cache tzdata ca-certificates jq curl libqrencode-tools && \
     chmod +x /entrypoint.sh
 
 
-RUN chmod +x ./entrypoint.sh
-ENTRYPOINT ["./entrypoint.sh"]
+ENTRYPOINT ["/entrypoint.sh"]
 EXPOSE 443
