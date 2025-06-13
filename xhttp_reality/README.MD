@@ -9,7 +9,7 @@ docker build -t xray_docker_xhttp_reality:latest -f Dockerfile .
 
 ## 懒人一键安装（docker已经准备好）
 ```
-EXTERNAL_PORT=23333 && docker run -d --name xray_xhttp_reality_freeman --restart=always --log-opt max-size=100m --log-opt max-file=3 -p $EXTERNAL_PORT:443 -e EXTERNAL_PORT=$EXTERNAL_PORT xray_docker_xhttp_reality:latest && sleep 3 && docker exec -it xray_xhttp_reality cat /config_info.txt
+EXTERNAL_PORT=23333 && docker run -d --name xray_xhttp_reality_freeman --restart=always --log-opt max-size=100m --log-opt max-file=3 -p $EXTERNAL_PORT:443 -e EXTERNAL_PORT=$EXTERNAL_PORT xray_docker_xhttp_reality:latest && sleep 3 && docker exec -it xray_xhttp_reality_freeman cat /config_info.txt
 ```
 
 ## 基础使用方法
@@ -17,7 +17,7 @@ EXTERNAL_PORT=23333 && docker run -d --name xray_xhttp_reality_freeman --restart
 如果你没有安装 docker 请先安装 docker
 
 ```
-curl -fsSL get.docker.com -o get-docker.sh && sh 
+curl -fsSL https://get.docker.com | sh
 ```
 
 ## 端口映射模式
@@ -76,7 +76,7 @@ EXTERNAL_PORT=443
 docker run -d --name xray_xhttp_reality_freeman --restart=always --log-opt max-size=100m --log-opt max-file=3 -p $EXTERNAL_PORT:443 -e EXTERNAL_PORT=$EXTERNAL_PORT -e UUID="XXX" -e SERVERNAMES="www.apple.com images.apple.com" -e DEST="www.apple.com:443" -e PRIVATEKEY="XXX" xray_docker_xhttp_reality:latest
 ```
 
-使用以下命令删除已经创建的容器，如下所示，需要将 xray_xhttp_reality 替换为你自己的容器名 (--name 所设置的名称)
+使用以下命令删除已经创建的容器，如下所示，需要将 xray_xhttp_reality_freeman 替换为你自己的容器名 (--name 所设置的名称)
 
 ```
 docker rm -f xray_xhttp_reality_freeman
