@@ -1,13 +1,7 @@
 ## xray_docker_reality
 xray reality docker 镜像
 
-[![xray_docker_reality_docker_image_build](https://github.com/wulabing/xray_docker/actions/workflows/xray_docker_reality.yml/badge.svg)](https://github.com/wulabing/xray_docker/actions/workflows/xray_docker_reality.yml)
 
-> 新的命令中添加了日志大小的限制，可以调整 max-size=100m 的数量来调整日志的最大大小，需要限制日志大小的用户请重新创建容器
-
-> 变更了镜像tag，不影响已经使用的用户
-
-> 本 xray_docker_reality 仓库会每两天在 UTC+8 04:00 自动构建镜像
 
 ## 懒人一键安装（docker已经准备好）
 ```
@@ -101,23 +95,3 @@ docker rm -f xray_reality
 请确保在使用前已正确安装和配置 XRay 客户端。
 为了保证安全和稳定，请勿将 UUID、私钥等敏感信息泄露给他人。
 
-## 捐赠
-
-您可以使用我的 搬瓦工 AFF 购买 VPS
-
-https://bandwagonhost.com/aff.php?aff=63939
-
-您可以使用我的 JustMySocks AFF 购买搬瓦工提供的代理
-
-https://justmysocks.net/members/aff.php?aff=17621
-
-您可以使用我的 DMIT AFF 购买 VPS
-
-https://www.dmit.io/aff.php?aff=3957
-
-您可以使用我的 Vultr AFF 创建新的 Vultr 账号并使用
-
-https://www.vultr.com/?ref=6881279
-
-您可以通过 USDT 支持我，感谢您的支持
-TRC20:TFannfnajNGYsMTuVDcXfZXXPbcaxAEffa
