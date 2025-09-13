@@ -1,0 +1,146 @@
+{
+  "log": {
+    "loglevel": "error",
+    "access": "/var/log/xray/access.log",
+    "error": "/var/log/xray/error.log"
+  },
+  "api": {
+    "tag": "api",
+    "services": [
+      "HandlerService",
+      "LoggerService",
+      "StatsService"
+    ]
+  },
+  "stats": {},
+  "policy": {
+    "levels": {
+      "0": {
+        "statsUserUplink": true,
+        "statsUserDownlink": true
+      }
+    },
+    "system": {
+      "statsInboundUplink": true,
+      "statsInboundDownlink": true,
+      "statsOutboundUplink": true,
+      "statsOutboundDownlink": true
+    }
+  },
+  "dns": {
+    "servers": [
+      "https+local://cloudflare-dns.com/dns-query",
+      "1.1.1.1",
+      "1.0.0.1",
+      "8.8.8.8",
+      "8.8.4.4",
+      "localhost"
+    ]
+  },
+  "inbounds": [
+    {
+      "tag": "dokodemo-in",
+      "port": 443,
+      "protocol": "dokodemo-door",
+      "settings": {
+        "address": "127.0.0.1",
+        "port": 65432,
+        "network": "tcp"
+      },
+      "sniffing": {
+        "enabled": true,
+        "destOverride": ["tls"],
+        "routeOnly": true
+      }
+    },
+    {
+      "tag": "reality-in",
+      "listen": "127.0.0.1",
+      "port": 65432,
+      "protocol": "vless",
+      "settings": {
+        "clients": [
+          {
+            "id": "xx",
+            "flow": "xtls-rprx-vision"
+          }
+        ],
+        "decryption": "none"
+      },
+      "streamSettings": {
+        "network": "xx",
+        "security": "reality",
+        "realitySettings": {
+          "show": true,
+          "dest": "xx",
+          "xver": 0,
+          "maxTimeDiff": 0,
+          "minClientVer": "",
+          "serverNames": [
+            "xx"
+          ],
+          "privateKey": "xx",
+          "shortIds": [
+            ""
+          ]
+        }
+      },
+      "sniffing": {
+        "enabled": true,
+        "destOverride": [
+          "http",
+          "tls"
+        ]
+      }
+    }
+  ],
+  "outbounds": [
+    {
+      "protocol": "vless",
+      "tag": "to-brazil",
+      "settings": {
+        "vnext": [
+          {
+            "address": "[ip.target.vps]",
+            "port": 443,
+            "users": [
+              {
+                "id": "[uid]",
+                "encryption": "none",
+                "flow": "xtls-rprx-vision"
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "tcp",
+        "security": "reality",
+        "realitySettings": {
+          "serverName": "www.apple.com",
+          "publicKey": "[publicKey]",
+          "shortIds": []
+        }
+      }
+    },
+    {
+      "protocol": "freedom",
+      "tag": "direct"
+    }
+  ],
+  "routing": {
+    "domainStrategy": "IPIfNonMatch",
+    "rules": [
+      {
+        "type": "field",
+        "inboundTag": ["reality-in"],
+        "outboundTag": "to-brazil"
+      },
+      {
+        "type": "field",
+        "inboundTag": ["dokodemo-in"],
+        "outboundTag": "direct"
+      }
+    ]
+  }
+}
