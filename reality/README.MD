@@ -12,6 +12,11 @@ docker build -t xray_docker_reality:latest -f Dockerfile .
 EXTERNAL_PORT=2333 && docker run -d --name xray_reality_freeman --restart=always --log-opt max-size=100m --log-opt max-file=3 -p $EXTERNAL_PORT:443 -e EXTERNAL_PORT=$EXTERNAL_PORT xray_docker_reality:latest && sleep 3 && docker exec -it xray_reality_freeman cat /config_info.txt
 ```
 
+## 懒人一键安装（docker已经准备好），指定PRIVATEKEY, UUID
+```
+EXTERNAL_PORT=2333 && docker run -d --name xray_reality_freeman --restart=always --log-opt max-size=100m --log-opt max-file=3 -p $EXTERNAL_PORT:443 -e EXTERNAL_PORT=$EXTERNAL_PORT -e PRIVATEKEY="XXX" -e UUID="XXX" xray_docker_reality:latest && sleep 3 && docker exec -it xray_reality_freeman cat /config_info.txt
+```
+
 ## 基础使用方法
 
 如果你没有安装 docker 请先安装 docker

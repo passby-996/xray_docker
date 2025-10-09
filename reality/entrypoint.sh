@@ -30,14 +30,20 @@ else
     SERVERNAMES="www.apple.com images.apple.com"
   fi
 
-  if [ -z "$PRIVATEKEY" ]; then
-    echo "PRIVATEKEY is not set. generate new key"
-    /xray x25519 >/key
-    PRIVATEKEY=$(cat /key | grep "Private" | awk -F ': ' '{print $2}')
-    PUBLICKEY=$(cat /key | grep "Password" | awk -F ': ' '{print $2}')
-    echo "Private key: $PRIVATEKEY"
-    echo "Public key: $PUBLICKEY"
-  fi
+# Check if PRIVATEKEY is set
+if [ -z "$PRIVATEKEY" ]; then
+  echo "PRIVATEKEY is not set. Generating new key pair..."
+  /xray x25519 > /key
+  PRIVATEKEY=$(awk -F ': ' '/Private/ {print $2}' /key)
+  PUBLICKEY=$(awk -F ': ' '/Password/ {print $2}' /key)
+else
+  echo "PRIVATEKEY is set. Deriving public key..."
+  PUBLICKEY=$(/xray x25519 -i "$PRIVATEKEY" | awk -F ': ' '/Password/ {print $2}')
+fi
+
+# Output results
+echo "Private key: $PRIVATEKEY"
+echo "Public key:  $PUBLICKEY"
 
   if [ -z "$NETWORK" ]; then
     echo "NETWORK is not set,set default value tcp"
