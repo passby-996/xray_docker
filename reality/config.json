@@ -40,6 +40,7 @@
   "inbounds": [
     {
       "tag": "dokodemo-in",
+      "listen": "::",
       "port": 443,
       "protocol": "dokodemo-door",
       "settings": {
@@ -107,11 +108,13 @@
     "domainStrategy": "IPIfNonMatch",
     "rules": [
       {
+        "type":"field", 
         "inboundTag": ["dokodemo-in"],
         "domain": ["xx"],
         "outboundTag": "direct"
       },
       {
+        "type":"field", 
         "inboundTag": ["dokodemo-in"],
         "outboundTag": "blocked"
       },
