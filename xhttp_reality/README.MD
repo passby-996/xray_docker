@@ -12,7 +12,22 @@ docker build -t xray_docker_xhttp_reality:latest -f Dockerfile .
 EXTERNAL_PORT=23333 && docker run -d --name xray_xhttp_reality_freeman --restart=always --log-opt max-size=100m --log-opt max-file=3 -p $EXTERNAL_PORT:443 -e EXTERNAL_PORT=$EXTERNAL_PORT xray_docker_xhttp_reality:latest && sleep 3 && docker exec -it xray_xhttp_reality_freeman cat /config_info.txt
 ```
 
-## 懒人一键安装（docker已经准备好）
+## 懒人一键安装（IP6，服务器需要支持IP6）
+```
+EXTERNAL_PORT=1234 && \
+docker run -d --name xray_xhttp_reality_freeman \
+  --network host \
+  --restart=always \
+  --log-opt max-size=100m --log-opt max-file=3 \
+  -e HOSTMODE_PORT=$EXTERNAL_PORT \
+  -e EXTERNAL_PORT=$EXTERNAL_PORT \
+  xray_docker_xhttp_reality:latest \
+&& sleep 3 \
+&& docker exec -it xray_xhttp_reality_freeman cat /config_info.txt
+
+```
+
+## 懒人一键安装（docker已经准备好， set uuid）
 ```
 EXTERNAL_PORT=23333 && docker run -d --name xray_xhttp_reality_freeman --restart=always --log-opt max-size=100m --log-opt max-file=3 -p $EXTERNAL_PORT:443 -e EXTERNAL_PORT=$EXTERNAL_PORT -e PRIVATEKEY="XXX" -e UUID="XXX"  xray_docker_xhttp_reality:latest && sleep 3 && docker exec -it xray_xhttp_reality_freeman cat /config_info.txt
 ```

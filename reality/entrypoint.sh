@@ -2,8 +2,7 @@
 if [ -f /config_info.txt ]; then
   echo "config.json exist"
 else
-  IPV6="$(curl -6 -sS --connect-timeout 3 --retry 2 https://ip.sb 2>/dev/null | tr -d '\r\n ')"
-  echo "$IPV6" | grep -q ':' || IPV6="null"
+  IPV6=$(curl -6 -sSL --connect-timeout 3 --retry 2  ip.sb || echo "null")
   IPV4=$(curl -4 -sSL --connect-timeout 3 --retry 2  ip.sb || echo "null")
   if [ -z "$UUID" ]; then
     echo "UUID is not set, generate random UUID "
@@ -81,8 +80,8 @@ echo "Public key:  $PUBLICKEY"
     echo "IPV4 订阅连接: $SUB_IPV4" >>/config_info.txt
     echo -e "IPV4 订阅二维码:\n$(echo "$SUB_IPV4" | qrencode -o - -t UTF8)" >>/config_info.txt
   fi
-  if [ "$IPV6" != "null" ];then
-    SUB_IPV6="vless://$UUID@$IPV6:$EXTERNAL_PORT?encryption=none&security=reality&type=$NETWORK&sni=$FIRST_SERVERNAME&fp=chrome&pbk=$PUBLICKEY&flow=xtls-rprx-vision#${IPV6}-freeman_docker_vless_reality_vision"
+  if [ "$IPV6" != "null" ]; then
+    SUB_IPV6="vless://$UUID@[${IPV6}]:$EXTERNAL_PORT?encryption=none&security=reality&type=$NETWORK&sni=$FIRST_SERVERNAME&fp=chrome&pbk=$PUBLICKEY&flow=xtls-rprx-vision#${IPV6}-freeman_docker_vless_reality_vision"
     echo "IPV6 订阅连接: $SUB_IPV6" >>/config_info.txt
     echo -e "IPV6 订阅二维码:\n$(echo "$SUB_IPV6" | qrencode -o - -t UTF8)" >>/config_info.txt
   fi
