@@ -40,6 +40,7 @@
   "inbounds": [
     {
       "tag": "dokodemo-in",
+      "listen": "::",
       "port": 443,
       "protocol": "dokodemo-door",
       "settings": {
@@ -54,7 +55,6 @@
       }
     },
     {
-      "tag": "reality-in",
       "listen": "127.0.0.1",
       "port": 65432,
       "protocol": "vless",
@@ -96,16 +96,16 @@
   ],
   "outbounds": [
     {
+      "tag": "to-vpsb",
       "protocol": "vless",
-      "tag": "to-brazil",
       "settings": {
         "vnext": [
           {
-            "address": "[ip.target.vps]",
+            "address": "xx",
             "port": 443,
             "users": [
               {
-                "id": "[uid]",
+                "id": "xx",
                 "encryption": "none",
                 "flow": "xtls-rprx-vision"
               }
@@ -117,29 +117,75 @@
         "network": "tcp",
         "security": "reality",
         "realitySettings": {
-          "serverName": "www.apple.com",
-          "publicKey": "[publicKey]",
-          "shortIds": []
+          "show": false,
+          "fingerprint": "firefox",
+          "serverName": "xx",
+          "publicKey": "xx",
+          "shortId": "xx",
+          "spiderX": ""
         }
       }
     },
     {
       "protocol": "freedom",
       "tag": "direct"
+    },
+    {
+      "protocol": "blackhole",
+      "tag": "blocked"
     }
   ],
   "routing": {
     "domainStrategy": "IPIfNonMatch",
     "rules": [
       {
+        "type":"field",
+        "inboundTag": ["dokodemo-in"],
+        "domain": ["xx"],
+        "outboundTag": "direct"
+      },
+      {
+        "type":"field",
+        "inboundTag": ["dokodemo-in"],
+        "outboundTag": "blocked"
+      },
+      {
+        "inboundTag": [
+          "api"
+        ],
+        "outboundTag": "api",
+        "type": "field"
+      },
+      {
+        "domain": [
+          "domain:byr.pt"
+        ],
         "type": "field",
-        "inboundTag": ["reality-in"],
-        "outboundTag": "to-brazil"
+        "outboundTag": "direct"
+      },
+      {
+        "domain": [
+          "domain:iqiyi.com",
+          "domain:video.qq.com",
+          "domain:youku.com"
+        ],
+        "type": "field",
+        "outboundTag": "blocked"
       },
       {
         "type": "field",
-        "inboundTag": ["dokodemo-in"],
-        "outboundTag": "direct"
+        "ip": [
+          "geoip:cn",
+          "geoip:private"
+        ],
+        "outboundTag": "blocked"
+      },
+      {
+        "protocol": [
+          "bittorrent"
+        ],
+        "type": "field",
+        "outboundTag": "blocked"
       }
     ]
   }

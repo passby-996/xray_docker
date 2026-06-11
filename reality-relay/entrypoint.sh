@@ -50,7 +50,7 @@ echo "Public key:  $PUBLICKEY"
     NETWORK="tcp"
   fi
 
-  # change config
+  # change config (client-facing inbound, same as reality/)
   jq ".inbounds[1].settings.clients[0].id=\"$UUID\"" /config.json >/config.json_tmp && mv /config.json_tmp /config.json
   jq ".inbounds[1].streamSettings.realitySettings.dest=\"$DEST\"" /config.json >/config.json_tmp && mv /config.json_tmp /config.json
 
@@ -62,10 +62,44 @@ echo "Public key:  $PUBLICKEY"
   jq ".inbounds[1].streamSettings.network=\"$NETWORK\"" /config.json >/config.json_tmp && mv /config.json_tmp /config.json
 
 
+  # ---- VPS B (landing node) outbound ----
+  # This relay (VPS A) forwards decrypted traffic onward to VPS B over a second
+  # VLESS+Reality connection, acting as a *client* of VPS B's reality inbound.
+  # VPSB_* values come from VPS B's own /config_info.txt (the "reality" image).
+  if [ -z "$VPSB_ADDR" ] || [ -z "$VPSB_UUID" ] || [ -z "$VPSB_PUBLICKEY" ] || [ -z "$VPSB_SERVERNAME" ]; then
+    echo "ERROR: VPSB_ADDR, VPSB_UUID, VPSB_PUBLICKEY and VPSB_SERVERNAME must all be set"
+    echo "       (these are taken from VPS B's config_info.txt)"
+    exit 1
+  fi
+
+  if [ -z "$VPSB_PORT" ]; then
+    echo "VPSB_PORT is not set, use default value 443"
+    VPSB_PORT=443
+  fi
+
+  if [ -z "$VPSB_SHORTID" ]; then
+    echo "VPSB_SHORTID is not set, use default value \"\""
+    VPSB_SHORTID=""
+  fi
+
+  if [ -z "$VPSB_FLOW" ]; then
+    echo "VPSB_FLOW is not set, use default value xtls-rprx-vision"
+    VPSB_FLOW="xtls-rprx-vision"
+  fi
+
+  jq ".outbounds[0].settings.vnext[0].address=\"$VPSB_ADDR\"" /config.json >/config.json_tmp && mv /config.json_tmp /config.json
+  jq ".outbounds[0].settings.vnext[0].port=$VPSB_PORT" /config.json >/config.json_tmp && mv /config.json_tmp /config.json
+  jq ".outbounds[0].settings.vnext[0].users[0].id=\"$VPSB_UUID\"" /config.json >/config.json_tmp && mv /config.json_tmp /config.json
+  jq ".outbounds[0].settings.vnext[0].users[0].flow=\"$VPSB_FLOW\"" /config.json >/config.json_tmp && mv /config.json_tmp /config.json
+  jq ".outbounds[0].streamSettings.realitySettings.serverName=\"$VPSB_SERVERNAME\"" /config.json >/config.json_tmp && mv /config.json_tmp /config.json
+  jq ".outbounds[0].streamSettings.realitySettings.publicKey=\"$VPSB_PUBLICKEY\"" /config.json >/config.json_tmp && mv /config.json_tmp /config.json
+  jq ".outbounds[0].streamSettings.realitySettings.shortId=\"$VPSB_SHORTID\"" /config.json >/config.json_tmp && mv /config.json_tmp /config.json
+
 
   FIRST_SERVERNAME=$(echo $SERVERNAMES | awk '{print $1}')
   # config info with green color
   echo -e "\033[32m" >/config_info.txt
+  echo "=== VPS A (relay, this node) ===" >>/config_info.txt
   echo "IPV6: $IPV6" >>/config_info.txt
   echo "IPV4: $IPV4" >>/config_info.txt
   echo "UUID: $UUID" >>/config_info.txt
@@ -76,16 +110,25 @@ echo "Public key:  $PUBLICKEY"
   echo "PUBLICKEY/PASSWORD: $PUBLICKEY" >>/config_info.txt
   echo "NETWORK: $NETWORK" >>/config_info.txt
   if [ "$IPV4" != "null" ]; then
-    SUB_IPV4="vless://$UUID@$IPV4:$EXTERNAL_PORT?encryption=none&security=reality&type=$NETWORK&sni=$FIRST_SERVERNAME&fp=firefox&pbk=$PUBLICKEY&flow=xtls-rprx-vision#${IPV4}-freeman_docker_vless_reality_vision"
+    SUB_IPV4="vless://$UUID@$IPV4:$EXTERNAL_PORT?encryption=none&security=reality&type=$NETWORK&sni=$FIRST_SERVERNAME&fp=firefox&pbk=$PUBLICKEY&flow=xtls-rprx-vision#${IPV4}-freeman_docker_vless_reality_relay"
     echo "IPV4 订阅连接: $SUB_IPV4" >>/config_info.txt
     echo -e "IPV4 订阅二维码:\n$(echo "$SUB_IPV4" | qrencode -o - -t UTF8)" >>/config_info.txt
   fi
   if [ "$IPV6" != "null" ]; then
-    SUB_IPV6="vless://$UUID@[${IPV6}]:$EXTERNAL_PORT?encryption=none&security=reality&type=$NETWORK&sni=$FIRST_SERVERNAME&fp=firefox&pbk=$PUBLICKEY&flow=xtls-rprx-vision#${IPV6}-freeman_docker_vless_reality_vision"
+    SUB_IPV6="vless://$UUID@[${IPV6}]:$EXTERNAL_PORT?encryption=none&security=reality&type=$NETWORK&sni=$FIRST_SERVERNAME&fp=firefox&pbk=$PUBLICKEY&flow=xtls-rprx-vision#${IPV6}-freeman_docker_vless_reality_relay"
     echo "IPV6 订阅连接: $SUB_IPV6" >>/config_info.txt
     echo -e "IPV6 订阅二维码:\n$(echo "$SUB_IPV6" | qrencode -o - -t UTF8)" >>/config_info.txt
   fi
 
+  echo "" >>/config_info.txt
+  echo "=== VPS B (landing, downstream) ===" >>/config_info.txt
+  echo "VPSB_ADDR: $VPSB_ADDR" >>/config_info.txt
+  echo "VPSB_PORT: $VPSB_PORT" >>/config_info.txt
+  echo "VPSB_UUID: $VPSB_UUID" >>/config_info.txt
+  echo "VPSB_SERVERNAME: $VPSB_SERVERNAME" >>/config_info.txt
+  echo "VPSB_PUBLICKEY: $VPSB_PUBLICKEY" >>/config_info.txt
+  echo "VPSB_SHORTID: $VPSB_SHORTID" >>/config_info.txt
+  echo "VPSB_FLOW: $VPSB_FLOW" >>/config_info.txt
 
   echo -e "\033[0m" >>/config_info.txt
 

@@ -105,8 +105,8 @@ docker rm -f xray_reality_freeman
 ## 环境变量
 你可以设置以下环境变量来自定义 XRay 的配置。
 * UUID：XRay 的唯一用户标识符。若未设置，脚本将自动生成一个随机 UUID。
-* DEST：目标地址。默认值为 www.apple.com:443。
-* SERVERNAMES：服务器名称列表。默认值为 www.apple.com images.apple.com。
+* DEST：目标地址。默认值为 addons.mozilla.org:443。
+* SERVERNAMES：服务器名称列表。默认值为 addons.mozilla.org。
 * PRIVATEKEY：私钥。若未设置，脚本将自动生成一个新的私钥和对应的公钥。
 * NETWORK：网络类型。默认值为 tcp。
 
